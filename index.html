@@ -4,62 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bot Refresh</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            text-align: center;
-            padding: 50px;
-        }
-        #startButton {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        #status {
-            margin-top: 20px;
-            font-size: 18px;
-        }
-    </style>
-</head>
-<body>
-    <h1>Bot Refresh Simulator</h1>
-    <p>Premi il pulsante per avviare i bot che faranno refresh su un URL specificato.</p>
-    <input type="text" id="urlInput" placeholder="Inserisci l'URL qui" />
-    <button id="startButton">Avvia Bot</button>
-    <div id="status"></div>
-
     <script>
         let bots = [];
-        let refreshInterval = 5000; // Intervallo di refresh in millisecondi (5 secondi)
 
-        document.getElementById('startButton').addEventListener('click', function() {
+        function startBots() {
             const url = document.getElementById('urlInput').value;
-            if (!url) {
-                alert("Per favore, inserisci un URL valido.");
-                return;
-            }
-
-            document.getElementById('status').innerText = "Avvio dei bot...";
-
             for (let i = 0; i < 100; i++) {
                 bots.push(setInterval(() => {
                     fetch(url, { method: 'GET' })
-                        .then(response => {
-                            if (response.ok) {
-                                console.log(`Bot ${i + 1}: Refresh eseguito su ${url}`);
-                            } else {
-                                console.error(`Bot ${i + 1}: Errore nel refresh su ${url}`);
-                            }
-                        })
-                        .catch(error => {
-                            console.error(`Bot ${i + 1}: Errore di rete - ${error}`);
-                        });
-                }, refreshInterval));
+                        .then(response => console.log(`Bot ${i + 1} ha fatto refresh su ${url}`))
+                        .catch(error => console.error(`Errore nel bot ${i + 1}:`, error));
+                }, 1000)); // Refresh ogni secondo
             }
+            document.getElementById('status').innerText = 'Bots avviati!';
+        }
 
-            document.getElementById('status').innerText = "Bot avviati! Refresh ogni 5 secondi.";
-        });
+        function stopBots() {
+            bots.forEach(bot => clearInterval(bot));
+            bots = [];
+            document.getElementById('status').innerText = 'Bots fermati!';
+        }
     </script>
+</head>
+<body>
+    <h1>Bot Refresh</h1>
+    <input type="text" id="urlInput" placeholder="Inserisci l'URL qui" />
+    <button onclick="startBots()">Avvia Bots</button>
+    <button onclick="stopBots()">Ferma Bots</button>
+    <p id="status"></p>
 </body>
 </html>
